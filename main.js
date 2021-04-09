@@ -125,7 +125,7 @@ class AudioTestComponent {
     }
     copyTestLink() {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
-            const url = new URL('', window.location.protocol + '//' + window.location.host);
+            const url = new URL('', window.location.protocol + '//' + window.location.host + window.location.pathname);
             url.searchParams.set('testName', this.testName);
             url.searchParams.set('userMediaConstraints', this.userMediaConstraintsText);
             url.searchParams.set('recordRtcOptions', this.recordRtcOptionsText);
