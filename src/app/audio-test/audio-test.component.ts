@@ -25,6 +25,9 @@ export class AudioTestComponent implements OnInit, OnDestroy {
   isRecordingRunning = false;
   audioUrl: string|null = null;
 
+  displayQrCode = false;
+  qrCodeUrl = '';
+
   private recorder: any;
   private stream: MediaStream;
 
@@ -65,11 +68,22 @@ export class AudioTestComponent implements OnInit, OnDestroy {
   }
 
   public async copyTestLink(): Promise<void> {
+    await navigator.clipboard.writeText(this.createTestLink().href);
+  }
+
+  public showQrCode(): void {
+    const qrCodeUrl = new URL('https://zxing.org/w/chart?cht=qr&chs=350x350&chld=L&choe=UTF-8&chl=');
+    qrCodeUrl.searchParams.set('chl', this.createTestLink().href);
+    this.qrCodeUrl = qrCodeUrl.href;
+    this.displayQrCode = true;
+  }
+
+  private createTestLink(): URL {
     const url = new URL('', window.location.protocol + '//' + window.location.host + window.location.pathname);
     url.searchParams.set('testName', this.testName);
     url.searchParams.set('userMediaConstraints', JSON.stringify(JSON.parse(this.userMediaConstraintsText)));
     url.searchParams.set('recordRtcOptions', JSON.stringify(JSON.parse(this.recordRtcOptionsText)));
-    await navigator.clipboard.writeText(url.href);
+    return url;
   }
 
   private async startRecording(): Promise<void> {

@@ -29,7 +29,18 @@
 
     <app-audio-player *ngIf="audioUrl" [audioUrl]="audioUrl" [audioName]="testName + '.wav'"></app-audio-player>
 
-    <button class="button ml-4"
-            (click)="copyTestLink()">Copy Test Link</button>
+    <div class="ml-4">
+      <button class="button" (click)="copyTestLink()">Copy Test Link</button>
+      <button class="button ml-2" (click)="showQrCode()">QrCode Test Link</button>
+    </div>
+  </div>
+  <div class="modal" [class.is-active]="displayQrCode" *ngIf="displayQrCode">
+    <div class="modal-background"></div>
+    <div class="modal-content">
+      <p class="image">
+        <img [src]="qrCodeUrl" alt="test link qrcode">
+      </p>
+    </div>
+    <button class="modal-close is-large" aria-label="close" (click)="displayQrCode = false"></button>
   </div>
 </section>
