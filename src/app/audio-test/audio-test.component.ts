@@ -37,14 +37,14 @@ export class AudioTestComponent implements OnInit, OnDestroy {
 
     const userMediaConstraintsText = url.searchParams.get('userMediaConstraints');
     if (userMediaConstraintsText) {
-      this.userMediaConstraintsText = userMediaConstraintsText;
+      this.userMediaConstraintsText = JSON.stringify(JSON.parse(userMediaConstraintsText), null, '  ');
     } else {
       this.userMediaConstraintsText = JSON.stringify(this.defaultUserMediaConstraints, null, '  ');
     }
 
     const recordRtcOptionsText = url.searchParams.get('recordRtcOptions');
     if (recordRtcOptionsText) {
-      this.recordRtcOptionsText = recordRtcOptionsText;
+      this.recordRtcOptionsText = JSON.stringify(JSON.parse(recordRtcOptionsText), null, '  ');
     } else {
       this.recordRtcOptionsText = JSON.stringify(this.defaultRecordRtcOptions, null, '  ');
     }
@@ -67,8 +67,8 @@ export class AudioTestComponent implements OnInit, OnDestroy {
   public async copyTestLink(): Promise<void> {
     const url = new URL('', window.location.protocol + '//' + window.location.host + window.location.pathname);
     url.searchParams.set('testName', this.testName);
-    url.searchParams.set('userMediaConstraints', this.userMediaConstraintsText);
-    url.searchParams.set('recordRtcOptions', this.recordRtcOptionsText);
+    url.searchParams.set('userMediaConstraints', JSON.stringify(JSON.parse(this.userMediaConstraintsText)));
+    url.searchParams.set('recordRtcOptions', JSON.stringify(JSON.parse(this.recordRtcOptionsText)));
     await navigator.clipboard.writeText(url.href);
   }
 
