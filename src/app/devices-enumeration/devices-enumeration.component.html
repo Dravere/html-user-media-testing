@@ -1,0 +1,20 @@
+<section>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Device ID</th>
+        <th>Group ID</th>
+        <th>Kind</th>
+        <th>Label</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let device of devices">
+        <td>{{ device.deviceId }}</td>
+        <td>{{ device.groupId }}</td>
+        <td>{{ device.kind }}</td>
+        <td>{{ device.label }}</td>
+      </tr>
+    </tbody>
+  </table>
+</section>

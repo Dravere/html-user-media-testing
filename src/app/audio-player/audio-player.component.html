@@ -1,0 +1,5 @@
+<button class="button" (click)="togglePlay()">{{ isPlaying ? 'Stop' : 'Play' }}</button>
+<button class="button ml-2" (click)="downloadAudio()">Download</button>
+<audio #audioElement (loadeddata)="onLoadedData()" (ended)="onPlaybackEnded()">
+  <source [src]="getAudioUrl()">
+</audio>

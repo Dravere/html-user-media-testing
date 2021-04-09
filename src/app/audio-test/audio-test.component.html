@@ -1,0 +1,35 @@
+<section>
+  <div class="field">
+    <label class="label" for="testName">Test Name</label>
+    <input id="testName" class="input" type="text" [(ngModel)]="testName" placeholder="Test Name">
+  </div>
+  <div class="field">
+    <label class="label" for="userMediaConstraintsInput">User Media Constraints</label>
+    <div class="control">
+      <textarea id="userMediaConstraintsInput"
+                class="textarea is-family-monospace"
+                placeholder="JSON"
+                rows="10"
+                [(ngModel)]="userMediaConstraintsText"></textarea>
+    </div>
+  </div>
+  <div class="field">
+    <label class="label" for="recordRtcOptionsInput">Record RTC Options</label>
+    <div class="control">
+      <textarea id="recordRtcOptionsInput"
+                class="textarea is-family-monospace"
+                placeholder="JSON"
+                rows="10"
+                [(ngModel)]="recordRtcOptionsText"></textarea>
+    </div>
+  </div>
+  <div class="is-flex is-justify-content-space-between">
+    <button class="button is-primary mr-4"
+            (click)="toggleRecording()">{{ isRecordingRunning ? 'Stop' : 'Record'}}</button>
+
+    <app-audio-player *ngIf="audioUrl" [audioUrl]="audioUrl" [audioName]="testName + '.wav'"></app-audio-player>
+
+    <button class="button ml-4"
+            (click)="copyTestLink()">Copy Test Link</button>
+  </div>
+</section>
