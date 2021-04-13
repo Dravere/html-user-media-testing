@@ -19,7 +19,7 @@ async function run() {
   await execute('ng build --base-href /html-user-media-testing/ --prod');
   await execute('git add dist');
   await execute('git commit -m "GitHub Pages Deploy Version ' + new Date().toISOString() + '"');
-  await execute('git push origin master');
+  await execute('git push origin main');
   await execute('git subtree push --prefix dist/HtmlUserMediaTesting origin gh-pages');
 }
 
