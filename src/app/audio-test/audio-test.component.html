@@ -1,7 +1,18 @@
 <section>
-  <div class="field">
-    <label class="label" for="testName">Test Name</label>
-    <input id="testName" class="input" type="text" [(ngModel)]="testName" placeholder="Test Name">
+  <div class="columns">
+    <div class="column field mb-0">
+      <label class="label" for="testName">Test Name</label>
+      <input id="testName" class="input" type="text" [(ngModel)]="testName" placeholder="Test Name">
+    </div>
+    <div class="column field is-flex is-flex-direction-row is-justify-content-space-between is-align-content-center">
+      <label class="checkbox mt-6 ml-6">
+        <input type="checkbox" [(ngModel)]="enableVisualization">
+        Enable Visualization
+      </label>
+      <div class="audio-recorder" [ngStyle]="{'display': enableVisualization && isRecordingRunning ? 'block' : 'none'}">
+        <canvas #visualizer class="visualizer" width="300" height="70"></canvas>
+      </div>
+    </div>
   </div>
   <div class="field">
     <label class="label" for="userMediaConstraintsInput">User Media Constraints</label>
