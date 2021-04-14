@@ -4,4 +4,22 @@
                          (createTestLink)="copyTestLink()"
                          (startRecording)="startRecording()"
                          (stopRecording)="stopRecording()"></app-record-audio-test>
+  <div class="columns">
+    <div class="column field">
+      <label class="label" for="recorderConfig">Opus Recorder Config</label>
+      <div class="control">
+        <textarea id="recorderConfig"
+                  class="textarea is-family-monospace"
+                  placeholder="JSON"
+                  rows="10"
+                  [(ngModel)]="recorderConfigText"></textarea>
+      </div>
+    </div>
+    <div class="column field">
+      <label class="label" for="additionalInfo">Additional Info</label>
+      <div id="additionalInfo" class="control">
+        <a href="https://github.com/chris-rudmin/opus-recorder">Opus Recorder Repository</a>
+      </div>
+    </div>
+  </div>
 </section>

@@ -10,6 +10,8 @@ import {SettingsUrl} from '../SettingsUrl';
   styleUrls: ['./opus-recorder-test.component.scss']
 })
 export class OpusRecorderTestComponent implements OnInit, OnDestroy {
+  public recorderConfigText = '{}';
+
   private recorder;
   @ViewChild('audioTestBase', {static: true}) audioTestBase: RecordAudioTestComponent;
 
@@ -29,6 +31,8 @@ export class OpusRecorderTestComponent implements OnInit, OnDestroy {
         audio: true
       };
     }
+
+    this.recorderConfigText = settingsUrl.getParam(['rc'], '{}');
   }
 
   ngOnDestroy(): void {
@@ -52,6 +56,7 @@ export class OpusRecorderTestComponent implements OnInit, OnDestroy {
     settingsUrl.setParam('t', 'o');
     settingsUrl.setParam('tn', this.audioTestBase.testName);
     settingsUrl.setJsonParam('umc', this.audioTestBase.userMediaConstraints);
+    settingsUrl.setParam('rc', this.recorderConfigText);
     return settingsUrl.getHref();
   }
 
@@ -60,7 +65,7 @@ export class OpusRecorderTestComponent implements OnInit, OnDestroy {
     const recorderConfig = Object.assign({
       mediaTrackConstraints: this.audioTestBase.userMediaConstraints.audio,
       encoderPath
-    }, {});
+    }, JSON.parse(this.recorderConfigText));
     this.recorder = new Recorder(recorderConfig);
     this.recorder.ondataavailable = (typedArray) => {
       this.audioTestBase.appendLogLine('Audio data prepared');
