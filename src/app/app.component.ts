@@ -7,5 +7,20 @@ import {Component} from '@angular/core';
 })
 export class AppComponent {
   title = 'HtmlUserMediaTesting';
-  tabSelection = 'OpusRecorderTest';
+  tabSelection: string;
+
+  constructor() {
+    switch (new URL(window.location.href).searchParams.get('t')) {
+      default:
+      case 'r':
+        this.tabSelection = 'RecordRtcTest';
+        break;
+      case 'o':
+        this.tabSelection = 'OpusRecorderTest';
+        break;
+      case 'e':
+        this.tabSelection = 'DevicesEnumeration';
+        break;
+    }
+  }
 }

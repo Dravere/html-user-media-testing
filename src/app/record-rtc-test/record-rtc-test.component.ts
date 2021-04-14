@@ -98,6 +98,7 @@ export class RecordRtcTestComponent implements OnInit, OnDestroy, AfterViewInit 
 
   private createTestLink(): string {
     const settingsUrl = new SettingsUrl(new URL('', window.location.protocol + '//' + window.location.host + window.location.pathname));
+    settingsUrl.setParam('t', 'r');
     settingsUrl.setParam('tn', this.audioTestBase.testName);
     settingsUrl.setJsonParam('umc', this.audioTestBase.userMediaConstraints);
     settingsUrl.setJsonParam('rro', JSON.parse(this.recordRtcOptionsText));
