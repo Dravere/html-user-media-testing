@@ -25,10 +25,12 @@
     "zone.js": "~0.11.3",
     "bulma": "^0.9.2",
     "recordrtc": "^5.6.2",
-    "file-saver": "^2.0.5"
+    "file-saver": "^2.0.5",
+    "opus-recorder": "^8.0.3"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.1102.8",
+    "@angular-builders/custom-webpack": "^11.1.1",
     "@angular/cli": "~11.2.8",
     "@angular/compiler-cli": "~11.2.9",
     "@types/jasmine": "~3.6.0",

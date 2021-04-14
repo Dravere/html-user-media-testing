@@ -1,11 +1,13 @@
 <main class="container section">
-  <div class="tabs is-centered is-medium is-boxed">
+  <div class="tabs is-centered is-boxed">
     <ul>
-      <li [class.is-active]="tabSelection === 'RecordRtcTest'"><a (click)="tabSelection = 'RecordRtcTest'">RecordRTC Test</a></li>
+      <li [class.is-active]="tabSelection === 'OpusRecorderTest'"><a (click)="tabSelection = 'OpusRecorderTest'">Opus Recorder</a></li>
+      <li [class.is-active]="tabSelection === 'RecordRtcTest'"><a (click)="tabSelection = 'RecordRtcTest'">RecordRTC</a></li>
       <li [class.is-active]="tabSelection === 'DevicesEnumeration'"><a (click)="tabSelection = 'DevicesEnumeration'">Enumeration</a></li>
     </ul>
   </div>
   <div [ngSwitch]="tabSelection">
+    <app-opus-recorder-test *ngSwitchCase="'OpusRecorderTest'"></app-opus-recorder-test>
     <app-devices-enumeration *ngSwitchCase="'DevicesEnumeration'"></app-devices-enumeration>
     <app-record-rtc-test *ngSwitchCase="'RecordRtcTest'"></app-record-rtc-test>
   </div>
