@@ -2,11 +2,11 @@ import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from
 import * as RecordRTC from 'recordrtc';
 
 @Component({
-  selector: 'app-audio-test',
-  templateUrl: './audio-test.component.html',
-  styleUrls: ['./audio-test.component.scss']
+  selector: 'app-record-rtc-test',
+  templateUrl: './record-rtc-test.component.html',
+  styleUrls: ['./record-rtc-test.component.scss']
 })
-export class AudioTestComponent implements OnInit, OnDestroy, AfterViewInit {
+export class RecordRtcTestComponent implements OnInit, OnDestroy, AfterViewInit {
   private defaultUserMediaConstraints: any = {
     video: false,
     audio: true,

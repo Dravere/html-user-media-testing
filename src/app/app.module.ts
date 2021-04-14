@@ -5,7 +5,7 @@ import { AppComponent } from './app.component';
 import {FormsModule} from '@angular/forms';
 import { AudioPlayerComponent } from './audio-player/audio-player.component';
 import { DevicesEnumerationComponent } from './devices-enumeration/devices-enumeration.component';
-import { AudioTestComponent } from './audio-test/audio-test.component';
+import { RecordRtcTestComponent } from './record-rtc-test/record-rtc-test.component';
 import { BlobDownloadComponent } from './blob-download/blob-download.component';
 
 @NgModule({
@@ -13,7 +13,7 @@ import { BlobDownloadComponent } from './blob-download/blob-download.component';
     AppComponent,
     AudioPlayerComponent,
     DevicesEnumerationComponent,
-    AudioTestComponent,
+    RecordRtcTestComponent,
     BlobDownloadComponent
   ],
     imports: [
