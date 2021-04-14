@@ -26,6 +26,8 @@ export class RecordRtcTestComponent implements OnInit, OnDestroy, AfterViewInit 
   enableVisualization = false;
   @ViewChild('visualizer', {static: true}) canvasElementRef: ElementRef;
 
+  autoRecorderChoice = false;
+
   private recorder: any;
   private stream: MediaStream;
 
@@ -128,9 +130,19 @@ export class RecordRtcTestComponent implements OnInit, OnDestroy, AfterViewInit 
         this.visualize();
       }
 
-      this.recorder = new RecordRTC.StereoAudioRecorder(this.stream, recordRtcOptions);
+      if (this.autoRecorderChoice) {
+        this.recorder = RecordRTC(this.stream, recordRtcOptions);
+      } else {
+        this.recorder = new RecordRTC.StereoAudioRecorder(this.stream, recordRtcOptions);
+      }
+
       this.audioTestBase.appendLogLine('Start recording');
-      this.recorder.record();
+
+      if (this.autoRecorderChoice) {
+        this.recorder.startRecording();
+      } else {
+        this.recorder.record();
+      }
     } catch (e) {
       console.log('Failed to start with the recording!', e);
       this.audioTestBase.appendLogLine('Start of the recording failed!');
@@ -140,12 +152,18 @@ export class RecordRtcTestComponent implements OnInit, OnDestroy, AfterViewInit 
   public async stopRecording(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       try {
-        this.recorder.stop((blob) => {
+        const callback = (blob) => {
           this.audioTestBase.audioUrl = URL.createObjectURL(blob);
           this.stopTracks();
           this.audioTestBase.appendLogLine('Recording stopped');
           resolve();
-        });
+        };
+
+        if (this.autoRecorderChoice) {
+          this.recorder.stopRecording(() => callback(this.recorder.getBlob()));
+        } else {
+          this.recorder.stop(callback);
+        }
       } catch (e) {
         console.log('Error while stopping recording', e);
         this.audioTestBase.appendLogLine('Error while stopping recording!');

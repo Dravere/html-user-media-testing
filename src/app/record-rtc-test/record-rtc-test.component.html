@@ -17,11 +17,19 @@
     </div>
     <div class="column">
       <label class="label" for="additionalSettings">Additional Settings</label>
-      <div id="additionalSettings" class="field is-flex is-flex-direction-row is-justify-content-space-between is-align-content-center">
-        <label class="checkbox">
-          <input type="checkbox" [(ngModel)]="enableVisualization">
-          Enable Visualization
-        </label>
+      <div id="additionalSettings" class="control">
+        <div class="field">
+          <label class="checkbox">
+            <input type="checkbox" [(ngModel)]="enableVisualization">
+            Enable Visualization
+          </label>
+        </div>
+        <div class="field">
+          <label class="checkbox">
+            <input type="checkbox" [(ngModel)]="autoRecorderChoice">
+            Let RecordRTC choose recorder type
+          </label>
+        </div>
         <div class="audio-recorder" [ngStyle]="{'display': enableVisualization && audioTestBase.isRecordingRunning ? 'block' : 'none'}">
           <canvas #visualizer class="visualizer" width="300" height="70"></canvas>
         </div>
