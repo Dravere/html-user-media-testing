@@ -1,0 +1,47 @@
+<section>
+  <div class="field">
+    <label class="label" for="testName">Test Name</label>
+    <input id="testName" class="input" type="text" [(ngModel)]="testName" placeholder="Test Name">
+  </div>
+  <div class="columns">
+    <div class="column">
+      <button class="button is-primary"
+              (click)="toggleRecording()">{{ isRecordingRunning ? 'Stop' : 'Record'}}</button>
+    </div>
+    <div class="column is-flex is-flex-direction-row is-justify-content-center">
+      <app-audio-player *ngIf="audioUrl" [audioUrl]="audioUrl" [audioName]="getAudioName()"></app-audio-player>
+    </div>
+    <div class="column is-flex is-flex-direction-row is-justify-content-end">
+      <button class="button" (click)="copyTestLink()">Copy Test Link</button>
+      <button class="button ml-2" (click)="showQrCode()">QrCode Test Link</button>
+    </div>
+  </div>
+  <div class="columns mb-2">
+    <div class="column field">
+      <label class="label" for="userMediaConstraintsInput">User Media Constraints</label>
+      <div class="control">
+        <textarea id="userMediaConstraintsInput"
+                  class="textarea is-family-monospace"
+                  placeholder="JSON"
+                  rows="10"
+                  [(ngModel)]="userMediaConstraintsText"></textarea>
+      </div>
+    </div>
+    <div class="column field">
+      <label class="label" for="log">Log</label>
+      <textarea id="log"
+                class="textarea is-family-monospace"
+                rows="10"
+                [(ngModel)]="logText"></textarea>
+    </div>
+  </div>
+  <div class="modal" [class.is-active]="!!qrCodeUrl" *ngIf="!!qrCodeUrl">
+    <div class="modal-background"></div>
+    <div class="modal-content">
+      <p class="image">
+        <img [src]="qrCodeUrl" alt="test link qrcode">
+      </p>
+    </div>
+    <button class="modal-close is-large" aria-label="close" (click)="qrCodeUrl = null"></button>
+  </div>
+</section>

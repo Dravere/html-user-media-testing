@@ -7,6 +7,7 @@ import { AudioPlayerComponent } from './audio-player/audio-player.component';
 import { DevicesEnumerationComponent } from './devices-enumeration/devices-enumeration.component';
 import { RecordRtcTestComponent } from './record-rtc-test/record-rtc-test.component';
 import { BlobDownloadComponent } from './blob-download/blob-download.component';
+import { RecordAudioTestComponent } from './record-audio-test/record-audio-test.component';
 
 @NgModule({
   declarations: [
@@ -14,7 +15,8 @@ import { BlobDownloadComponent } from './blob-download/blob-download.component';
     AudioPlayerComponent,
     DevicesEnumerationComponent,
     RecordRtcTestComponent,
-    BlobDownloadComponent
+    BlobDownloadComponent,
+    RecordAudioTestComponent
   ],
     imports: [
         BrowserModule,

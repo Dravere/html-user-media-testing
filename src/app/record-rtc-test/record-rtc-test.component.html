@@ -1,57 +1,31 @@
 <section>
+  <app-record-audio-test #audioTestBase
+                         (createQrCode)="showQrCode()"
+                         (createTestLink)="copyTestLink()"
+                         (startRecording)="startRecording()"
+                         (stopRecording)="stopRecording()"></app-record-audio-test>
   <div class="columns">
-    <div class="column field mb-0">
-      <label class="label" for="testName">Test Name</label>
-      <input id="testName" class="input" type="text" [(ngModel)]="testName" placeholder="Test Name">
-    </div>
-    <div class="column field is-flex is-flex-direction-row is-justify-content-space-between is-align-content-center">
-      <label class="checkbox mt-6 ml-6">
-        <input type="checkbox" [(ngModel)]="enableVisualization">
-        Enable Visualization
-      </label>
-      <div class="audio-recorder" [ngStyle]="{'display': enableVisualization && isRecordingRunning ? 'block' : 'none'}">
-        <canvas #visualizer class="visualizer" width="300" height="70"></canvas>
+    <div class="column field">
+      <label class="label" for="recordRtcOptionsInput">Record RTC Options</label>
+      <div class="control">
+        <textarea id="recordRtcOptionsInput"
+                  class="textarea is-family-monospace"
+                  placeholder="JSON"
+                  rows="10"
+                  [(ngModel)]="recordRtcOptionsText"></textarea>
       </div>
     </div>
-  </div>
-  <div class="field">
-    <label class="label" for="userMediaConstraintsInput">User Media Constraints</label>
-    <div class="control">
-      <textarea id="userMediaConstraintsInput"
-                class="textarea is-family-monospace"
-                placeholder="JSON"
-                rows="10"
-                [(ngModel)]="userMediaConstraintsText"></textarea>
+    <div class="column">
+      <label class="label" for="additionalSettings">Additional Settings</label>
+      <div id="additionalSettings" class="field is-flex is-flex-direction-row is-justify-content-space-between is-align-content-center">
+        <label class="checkbox">
+          <input type="checkbox" [(ngModel)]="enableVisualization">
+          Enable Visualization
+        </label>
+        <div class="audio-recorder" [ngStyle]="{'display': enableVisualization && audioTestBase.isRecordingRunning ? 'block' : 'none'}">
+          <canvas #visualizer class="visualizer" width="300" height="70"></canvas>
+        </div>
+      </div>
     </div>
-  </div>
-  <div class="field">
-    <label class="label" for="recordRtcOptionsInput">Record RTC Options</label>
-    <div class="control">
-      <textarea id="recordRtcOptionsInput"
-                class="textarea is-family-monospace"
-                placeholder="JSON"
-                rows="10"
-                [(ngModel)]="recordRtcOptionsText"></textarea>
-    </div>
-  </div>
-  <div class="is-flex is-justify-content-space-between">
-    <button class="button is-primary mr-4"
-            (click)="toggleRecording()">{{ isRecordingRunning ? 'Stop' : 'Record'}}</button>
-
-    <app-audio-player *ngIf="audioUrl" [audioUrl]="audioUrl" [audioName]="testName + '.wav'"></app-audio-player>
-
-    <div class="ml-4">
-      <button class="button" (click)="copyTestLink()">Copy Test Link</button>
-      <button class="button ml-2" (click)="showQrCode()">QrCode Test Link</button>
-    </div>
-  </div>
-  <div class="modal" [class.is-active]="displayQrCode" *ngIf="displayQrCode">
-    <div class="modal-background"></div>
-    <div class="modal-content">
-      <p class="image">
-        <img [src]="qrCodeUrl" alt="test link qrcode">
-      </p>
-    </div>
-    <button class="modal-close is-large" aria-label="close" (click)="displayQrCode = false"></button>
   </div>
 </section>

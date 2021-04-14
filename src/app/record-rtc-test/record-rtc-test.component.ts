@@ -1,5 +1,6 @@
 import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import * as RecordRTC from 'recordrtc';
+import {RecordAudioTestComponent} from '../record-audio-test/record-audio-test.component';
 
 @Component({
   selector: 'app-record-rtc-test',
@@ -18,18 +19,12 @@ export class RecordRtcTestComponent implements OnInit, OnDestroy, AfterViewInit 
     bufferSize: 16384,
   };
 
-  testName = '';
-  userMediaConstraintsText = '';
   recordRtcOptionsText = '';
 
-  isRecordingRunning = false;
-  audioUrl: string|null = null;
-
-  displayQrCode = false;
-  qrCodeUrl = '';
+  @ViewChild('audioTestBase', {static: true}) audioTestBase: RecordAudioTestComponent;
 
   enableVisualization = false;
-  @ViewChild('visualizer', {static: false}) canvasElementRef: ElementRef;
+  @ViewChild('visualizer', {static: true}) canvasElementRef: ElementRef;
 
   private recorder: any;
   private stream: MediaStream;
@@ -46,14 +41,14 @@ export class RecordRtcTestComponent implements OnInit, OnDestroy, AfterViewInit 
     const url = new URL(window.location.href);
     const testName = url.searchParams.get('testName');
     if (testName) {
-      this.testName = testName;
+      this.audioTestBase.testName = testName;
     }
 
     const userMediaConstraintsText = url.searchParams.get('userMediaConstraints');
     if (userMediaConstraintsText) {
-      this.userMediaConstraintsText = JSON.stringify(JSON.parse(userMediaConstraintsText), null, '  ');
+      this.audioTestBase.userMediaConstraints = JSON.parse(userMediaConstraintsText);
     } else {
-      this.userMediaConstraintsText = JSON.stringify(this.defaultUserMediaConstraints, null, '  ');
+      this.audioTestBase.userMediaConstraints = this.defaultUserMediaConstraints;
     }
 
     const recordRtcOptionsText = url.searchParams.get('recordRtcOptions');
@@ -73,9 +68,7 @@ export class RecordRtcTestComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   async ngOnDestroy(): Promise<void> {
-    if (this.isRecordingRunning) {
-      await this.stopRecording();
-    }
+    this.stopTracks();
     if (this.analyser) {
       this.analyser.disconnect();
     }
@@ -90,14 +83,6 @@ export class RecordRtcTestComponent implements OnInit, OnDestroy, AfterViewInit 
     }
   }
 
-  public async toggleRecording(): Promise<void> {
-    if (this.isRecordingRunning) {
-      await this.stopRecording();
-    } else {
-      await this.startRecording();
-    }
-  }
-
   public async copyTestLink(): Promise<void> {
     await navigator.clipboard.writeText(this.createTestLink().href);
   }
@@ -105,27 +90,28 @@ export class RecordRtcTestComponent implements OnInit, OnDestroy, AfterViewInit 
   public showQrCode(): void {
     const qrCodeUrl = new URL('https://zxing.org/w/chart?cht=qr&chs=350x350&chld=L&choe=UTF-8&chl=');
     qrCodeUrl.searchParams.set('chl', this.createTestLink().href);
-    this.qrCodeUrl = qrCodeUrl.href;
-    this.displayQrCode = true;
+    this.audioTestBase.qrCodeUrl = qrCodeUrl.href;
   }
 
   private createTestLink(): URL {
     const url = new URL('', window.location.protocol + '//' + window.location.host + window.location.pathname);
-    url.searchParams.set('testName', this.testName);
-    url.searchParams.set('userMediaConstraints', JSON.stringify(JSON.parse(this.userMediaConstraintsText)));
+    url.searchParams.set('testName', this.audioTestBase.testName);
+    url.searchParams.set('userMediaConstraints', JSON.stringify(this.audioTestBase.userMediaConstraints));
     url.searchParams.set('recordRtcOptions', JSON.stringify(JSON.parse(this.recordRtcOptionsText)));
     url.searchParams.set('visualization', this.enableVisualization ? '1' : '0');
     return url;
   }
 
-  private async startRecording(): Promise<void> {
-    this.isRecordingRunning = true;
+  public async startRecording(): Promise<void> {
     try {
-      const userMediaConstraints = JSON.parse(this.userMediaConstraintsText);
+      this.audioTestBase.logText = '';
+      const userMediaConstraints = this.audioTestBase.userMediaConstraints;
       const recordRtcOptions = JSON.parse(this.recordRtcOptionsText);
+      this.audioTestBase.appendLogLine('Getting user media');
       this.stream = await navigator.mediaDevices.getUserMedia(userMediaConstraints);
 
       if (this.enableVisualization) {
+        this.audioTestBase.appendLogLine('Prepare visualization');
         this.audioContext = new AudioContext();
         this.analyser = this.audioContext.createAnalyser();
         this.analyser.minDecibels = -90;
@@ -143,28 +129,40 @@ export class RecordRtcTestComponent implements OnInit, OnDestroy, AfterViewInit 
       }
 
       this.recorder = new RecordRTC.StereoAudioRecorder(this.stream, recordRtcOptions);
+      this.audioTestBase.appendLogLine('Start recording');
       this.recorder.record();
     } catch (e) {
       console.log('Failed to start with the recording!', e);
-      this.isRecordingRunning = false;
+      this.audioTestBase.appendLogLine('Start of the recording failed!');
     }
   }
 
-  private async stopRecording(): Promise<void> {
+  public async stopRecording(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       try {
         this.recorder.stop((blob) => {
-          this.isRecordingRunning = false;
-          this.audioUrl = URL.createObjectURL(blob);
-          for (const track of this.stream.getAudioTracks()) {
-            track.stop();
-          }
+          this.audioTestBase.audioUrl = URL.createObjectURL(blob);
+          this.stopTracks();
+          this.audioTestBase.appendLogLine('Recording stopped');
           resolve();
         });
       } catch (e) {
+        console.log('Error while stopping recording', e);
+        this.audioTestBase.appendLogLine('Error while stopping recording!');
         reject(e);
       }
     });
+  }
+
+  private stopTracks(): void {
+    if (!this.stream) {
+      return;
+    }
+
+    for (const track of this.stream.getAudioTracks()) {
+      track.stop();
+    }
+    this.stream = null;
   }
 
   private visualize(): void {
