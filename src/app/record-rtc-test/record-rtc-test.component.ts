@@ -1,6 +1,7 @@
 import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import * as RecordRTC from 'recordrtc';
 import {RecordAudioTestComponent} from '../record-audio-test/record-audio-test.component';
+import {SettingsUrl} from '../SettingsUrl';
 
 @Component({
   selector: 'app-record-rtc-test',
@@ -40,28 +41,28 @@ export class RecordRtcTestComponent implements OnInit, OnDestroy, AfterViewInit 
   private source: MediaStreamAudioSourceNode;
 
   ngOnInit(): void {
-    const url = new URL(window.location.href);
-    const testName = url.searchParams.get('testName');
+    const settingsUrl = new SettingsUrl();
+    const testName = settingsUrl.getParam(['tn', 'testName']);
     if (testName) {
       this.audioTestBase.testName = testName;
     }
 
-    const userMediaConstraintsText = url.searchParams.get('userMediaConstraints');
-    if (userMediaConstraintsText) {
-      this.audioTestBase.userMediaConstraints = JSON.parse(userMediaConstraintsText);
+    const userMediaConstraints = settingsUrl.getJsonParam(['umc', 'userMediaConstraints']);
+    if (userMediaConstraints) {
+      this.audioTestBase.userMediaConstraints = userMediaConstraints;
     } else {
       this.audioTestBase.userMediaConstraints = this.defaultUserMediaConstraints;
     }
 
-    const recordRtcOptionsText = url.searchParams.get('recordRtcOptions');
-    if (recordRtcOptionsText) {
-      this.recordRtcOptionsText = JSON.stringify(JSON.parse(recordRtcOptionsText), null, '  ');
+    const recordRtcOptions = settingsUrl.getJsonParam(['rro', 'recordRtcOptions']);
+    if (recordRtcOptions) {
+      this.recordRtcOptionsText = JSON.stringify(recordRtcOptions, null, '  ');
     } else {
       this.recordRtcOptionsText = JSON.stringify(this.defaultRecordRtcOptions, null, '  ');
     }
 
-    const visualizationText = url.searchParams.get('visualization');
-    this.enableVisualization = (visualizationText === '1');
+    this.enableVisualization = settingsUrl.getBooleanParam(['vis', 'visualization'], false);
+    this.autoRecorderChoice = settingsUrl.getBooleanParam(['arc'], false);
   }
 
   ngAfterViewInit(): void {
@@ -86,22 +87,23 @@ export class RecordRtcTestComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   public async copyTestLink(): Promise<void> {
-    await navigator.clipboard.writeText(this.createTestLink().href);
+    await navigator.clipboard.writeText(this.createTestLink());
   }
 
   public showQrCode(): void {
     const qrCodeUrl = new URL('https://zxing.org/w/chart?cht=qr&chs=350x350&chld=L&choe=UTF-8&chl=');
-    qrCodeUrl.searchParams.set('chl', this.createTestLink().href);
+    qrCodeUrl.searchParams.set('chl', this.createTestLink());
     this.audioTestBase.qrCodeUrl = qrCodeUrl.href;
   }
 
-  private createTestLink(): URL {
-    const url = new URL('', window.location.protocol + '//' + window.location.host + window.location.pathname);
-    url.searchParams.set('testName', this.audioTestBase.testName);
-    url.searchParams.set('userMediaConstraints', JSON.stringify(this.audioTestBase.userMediaConstraints));
-    url.searchParams.set('recordRtcOptions', JSON.stringify(JSON.parse(this.recordRtcOptionsText)));
-    url.searchParams.set('visualization', this.enableVisualization ? '1' : '0');
-    return url;
+  private createTestLink(): string {
+    const settingsUrl = new SettingsUrl(new URL('', window.location.protocol + '//' + window.location.host + window.location.pathname));
+    settingsUrl.setParam('tn', this.audioTestBase.testName);
+    settingsUrl.setJsonParam('umc', this.audioTestBase.userMediaConstraints);
+    settingsUrl.setJsonParam('rro', JSON.parse(this.recordRtcOptionsText));
+    settingsUrl.setBooleanParam('vis', this.enableVisualization);
+    settingsUrl.setBooleanParam('arc', this.autoRecorderChoice);
+    return settingsUrl.getHref();
   }
 
   public async startRecording(): Promise<void> {
