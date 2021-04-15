@@ -157,7 +157,7 @@ export class RecordRtcTestComponent implements OnInit, OnDestroy, AfterViewInit 
       }
     } catch (e) {
       console.log('Failed to start with the recording!', e);
-      this.audioTestBase.appendLogLine('Start of the recording failed!');
+      this.audioTestBase.appendLogLine('Failed to start with the recording!');
     }
   }
 
