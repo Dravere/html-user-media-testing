@@ -172,7 +172,8 @@ export class RecordRtcTestComponent implements OnInit, OnDestroy, AfterViewInit 
         };
 
         if (this.autoRecorderChoice) {
-          this.recorder.stopRecording(() => callback(this.recorder.getBlob()));
+          this.recorder.stopRecording(() => setTimeout(() => callback(this.recorder.getBlob()), 120));
+          // this.recorder.stopRecording(() => callback(this.recorder.getBlob()));
         } else {
           this.recorder.stop(callback);
         }
