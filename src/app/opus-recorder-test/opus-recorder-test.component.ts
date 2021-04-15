@@ -79,7 +79,7 @@ export class OpusRecorderTestComponent implements OnInit, OnDestroy {
       if (trackSettings.sampleRate) {
         recorderConfig.wavSampleRate = trackSettings.sampleRate;
       } else {
-        recorderConfig.wavSampleRate = 48000;
+        recorderConfig.wavSampleRate = undefined;
       }
     }
 

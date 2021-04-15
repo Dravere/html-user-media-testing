@@ -138,7 +138,7 @@ export class RecordRtcTestComponent implements OnInit, OnDestroy, AfterViewInit 
         if (trackSettings.sampleRate) {
           recordRtcOptions.sampleRate = trackSettings.sampleRate;
         } else {
-          recordRtcOptions.sampleRate = 48000;
+          recordRtcOptions.sampleRate = undefined;
         }
       }
 
