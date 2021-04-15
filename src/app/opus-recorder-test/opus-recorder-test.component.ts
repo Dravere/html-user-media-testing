@@ -15,6 +15,9 @@ export class OpusRecorderTestComponent implements OnInit, OnDestroy {
   private recorder;
   @ViewChild('audioTestBase', {static: true}) audioTestBase: RecordAudioTestComponent;
 
+  private stream;
+  private audioContext;
+
   ngOnInit(): void {
     const settingsUrl = new SettingsUrl();
     const testName = settingsUrl.getParam(['tn', 'testName']);
@@ -66,6 +69,20 @@ export class OpusRecorderTestComponent implements OnInit, OnDestroy {
       mediaTrackConstraints: this.audioTestBase.userMediaConstraints.audio,
       encoderPath
     }, JSON.parse(this.recorderConfigText));
+
+    if (recorderConfig.wavSampleRate === 'auto') {
+      this.stream = await navigator.mediaDevices.getUserMedia({video: false, audio: recorderConfig.mediaTrackConstraints});
+      this.audioContext = new AudioContext();
+      recorderConfig.sourceNode = this.audioContext.createMediaStreamSource(this.stream);
+      const trackSettings = this.stream.getAudioTracks()[0].getSettings();
+
+      if (trackSettings.sampleRate) {
+        recorderConfig.wavSampleRate = trackSettings.sampleRate;
+      } else {
+        recorderConfig.wavSampleRate = 48000;
+      }
+    }
+
     this.recorder = new Recorder(recorderConfig);
     this.recorder.ondataavailable = (typedArray) => {
       this.audioTestBase.appendLogLine('Audio data prepared');
@@ -80,5 +97,13 @@ export class OpusRecorderTestComponent implements OnInit, OnDestroy {
     this.audioTestBase.appendLogLine('Stop recording');
     this.recorder.stop();
     this.recorder = null;
+    if (this.audioContext) {
+      this.audioContext.close();
+      this.audioContext = null;
+    }
+    if (this.stream) {
+      this.stream.getAudioTracks().forEach(track => track.close());
+      this.stream = null;
+    }
   }
 }

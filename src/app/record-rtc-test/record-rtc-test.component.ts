@@ -133,6 +133,15 @@ export class RecordRtcTestComponent implements OnInit, OnDestroy, AfterViewInit 
         this.visualize();
       }
 
+      const trackSettings = this.stream.getAudioTracks()[0].getSettings();
+      if (recordRtcOptions.sampleRate === 'auto') {
+        if (trackSettings.sampleRate) {
+          recordRtcOptions.sampleRate = trackSettings.sampleRate;
+        } else {
+          recordRtcOptions.sampleRate = 48000;
+        }
+      }
+
       if (this.autoRecorderChoice) {
         this.recorder = RecordRTC(this.stream, recordRtcOptions);
       } else {
