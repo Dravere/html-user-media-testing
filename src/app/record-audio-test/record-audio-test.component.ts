@@ -8,6 +8,7 @@ import {Component, EventEmitter, Input, Output} from '@angular/core';
 export class RecordAudioTestComponent {
   testName = '';
   userMediaConstraintsText = '';
+  audioUrl: string|null = null;
 
   @Input() get userMediaConstraints(): any {
     return JSON.parse(this.userMediaConstraintsText);
@@ -19,7 +20,16 @@ export class RecordAudioTestComponent {
   @Input() logText = '';
 
   @Input() isRecordingRunning = false;
-  @Input() audioUrl: string|null = null;
+  @Input() get audioBlob(): Blob|null {
+    return this.myAudioBlob;
+  }
+  set audioBlob(value) {
+    if (this.audioUrl) {
+      URL.revokeObjectURL(this.audioUrl);
+    }
+    this.myAudioBlob = value;
+    this.audioUrl = URL.createObjectURL(this.myAudioBlob);
+  }
 
   @Input() qrCodeUrl: string|null = null;
 
@@ -27,6 +37,8 @@ export class RecordAudioTestComponent {
   @Output() createTestLink = new EventEmitter();
   @Output() startRecording = new EventEmitter();
   @Output() stopRecording = new EventEmitter();
+
+  private myAudioBlob: Blob|null = null;
 
   public async toggleRecording(): Promise<void> {
     if (this.isRecordingRunning) {
@@ -56,10 +68,23 @@ export class RecordAudioTestComponent {
   }
 
   public getAudioName(): string {
-    if(this.testName.trim() === '') {
-      return new Date().toISOString() + '.wav';
+    if (this.testName.trim() === '') {
+      return new Date().toISOString() + this.getAudioFileExtension();
     }
 
-    return this.testName + '.wav';
+    return this.testName + this.getAudioFileExtension();
+  }
+
+  private getAudioFileExtension(): string {
+    if (this.myAudioBlob && this.myAudioBlob.type) {
+      const slashIndex = this.myAudioBlob.type.indexOf('/');
+      if (slashIndex > 0) {
+        const fileExtension = this.myAudioBlob.type.substr(slashIndex + 1);
+        if (fileExtension.length !== 0) {
+          return '.' + fileExtension;
+        }
+      }
+    }
+    return '.wav';
   }
 }

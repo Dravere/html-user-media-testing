@@ -1,7 +1,8 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {RecordAudioTestComponent} from '../record-audio-test/record-audio-test.component';
 import Recorder from 'opus-recorder';
-import encoderPath from 'opus-recorder/dist/waveWorker.min.js';
+import waveWorker from 'opus-recorder/dist/waveWorker.min.js';
+import opusWorker from 'opus-recorder/dist/encoderWorker.min.js';
 import {SettingsUrl} from '../SettingsUrl';
 
 @Component({
@@ -66,27 +67,30 @@ export class OpusRecorderTestComponent implements OnInit, OnDestroy {
   public async startRecording(): Promise<void> {
     this.audioTestBase.logText = '';
     const recorderConfig = Object.assign({
-      mediaTrackConstraints: this.audioTestBase.userMediaConstraints.audio,
-      encoderPath
+      mediaTrackConstraints: this.audioTestBase.userMediaConstraints.audio
     }, JSON.parse(this.recorderConfigText));
 
-    if (recorderConfig.wavSampleRate === 'auto') {
+    const mimeType = recorderConfig.opus ? 'audio/ogg' : 'audio/wav';
+    recorderConfig.encoderPath = recorderConfig.opus ? opusWorker : waveWorker;
+    recorderConfig.opus = undefined;
+
+    if (recorderConfig.sampleRate === 'auto') {
       this.stream = await navigator.mediaDevices.getUserMedia({video: false, audio: recorderConfig.mediaTrackConstraints});
       this.audioContext = new AudioContext();
       recorderConfig.sourceNode = this.audioContext.createMediaStreamSource(this.stream);
       const trackSettings = this.stream.getAudioTracks()[0].getSettings();
 
       if (trackSettings.sampleRate) {
-        recorderConfig.wavSampleRate = trackSettings.sampleRate;
-      } else {
-        recorderConfig.wavSampleRate = undefined;
+        recorderConfig.originalSampleRateOverride = trackSettings.sampleRate;
       }
+
+      recorderConfig.sampleRate = undefined;
     }
 
     this.recorder = new Recorder(recorderConfig);
     this.recorder.ondataavailable = (typedArray) => {
       this.audioTestBase.appendLogLine('Audio data prepared');
-      this.audioTestBase.audioUrl = URL.createObjectURL(new Blob([typedArray], {type: 'audio/wav'}));
+      this.audioTestBase.audioBlob = new Blob([typedArray], {type: mimeType});
     };
 
     this.audioTestBase.appendLogLine('Start recording');

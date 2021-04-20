@@ -133,6 +133,16 @@ export class RecordRtcTestComponent implements OnInit, OnDestroy, AfterViewInit 
         this.visualize();
       }
 
+      if (recordRtcOptions.mimeType === 'auto') {
+        if (this.autoRecorderChoice && typeof MediaRecorder !== undefined && MediaRecorder.isTypeSupported('audio/ogg;codecs=opus')) {
+          recordRtcOptions.mimeType = 'audio/ogg;codecs=opus';
+        } else {
+          recordRtcOptions.mimeType = 'audio/wav';
+        }
+
+        this.audioTestBase.appendLogLine('Using codec: ' + recordRtcOptions.mimeType);
+      }
+
       const trackSettings = this.stream.getAudioTracks()[0].getSettings();
       if (recordRtcOptions.sampleRate === 'auto') {
         if (trackSettings.sampleRate) {
@@ -165,7 +175,7 @@ export class RecordRtcTestComponent implements OnInit, OnDestroy, AfterViewInit 
     return new Promise<void>((resolve, reject) => {
       try {
         const callback = (blob) => {
-          this.audioTestBase.audioUrl = URL.createObjectURL(blob);
+          this.audioTestBase.audioBlob = blob;
           this.stopTracks();
           this.audioTestBase.appendLogLine('Recording stopped');
           resolve();
