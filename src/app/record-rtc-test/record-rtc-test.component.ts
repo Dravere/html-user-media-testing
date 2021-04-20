@@ -144,16 +144,28 @@ export class RecordRtcTestComponent implements OnInit, OnDestroy, AfterViewInit 
       }
 
       const trackSettings = this.stream.getAudioTracks()[0].getSettings();
+      const trackSampleRate = trackSettings.sampleRate;
       if (recordRtcOptions.sampleRate === 'auto') {
-        let sampleRate = trackSettings.sampleRate;
-        if (sampleRate) {
-          if (!this.autoRecorderChoice && (sampleRate < 22050 || sampleRate > 96000)) {
+        if (trackSampleRate) {
+          if (!this.autoRecorderChoice && (trackSampleRate < 22050 || trackSampleRate > 96000)) {
             console.log('Clamping sample rate between 22000 and 96000!');
-            sampleRate = Math.max(Math.min(sampleRate, 96000), 22000);
+            recordRtcOptions.sampleRate = Math.max(Math.min(trackSampleRate, 96000), 22050);
+          } else {
+            recordRtcOptions.sampleRate = trackSampleRate;
           }
-          recordRtcOptions.sampleRate = sampleRate;
         } else {
           recordRtcOptions.sampleRate = undefined;
+        }
+      }
+
+      if (recordRtcOptions.desiredSampRate === 'auto') {
+        if (trackSampleRate) {
+          recordRtcOptions.desiredSampRate = trackSampleRate;
+          if (!recordRtcOptions.sampleRate) {
+            recordRtcOptions.sampleRate = 48000;
+          }
+        } else {
+          recordRtcOptions.desiredSampRate = undefined;
         }
       }
 
