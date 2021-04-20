@@ -145,8 +145,13 @@ export class RecordRtcTestComponent implements OnInit, OnDestroy, AfterViewInit 
 
       const trackSettings = this.stream.getAudioTracks()[0].getSettings();
       if (recordRtcOptions.sampleRate === 'auto') {
-        if (trackSettings.sampleRate) {
-          recordRtcOptions.sampleRate = trackSettings.sampleRate;
+        let sampleRate = trackSettings.sampleRate;
+        if (sampleRate) {
+          if (!this.autoRecorderChoice && (sampleRate < 22050 || sampleRate > 96000)) {
+            console.log('Clamping sample rate between 22000 and 96000!');
+            sampleRate = Math.max(Math.min(sampleRate, 96000), 22000);
+          }
+          recordRtcOptions.sampleRate = sampleRate;
         } else {
           recordRtcOptions.sampleRate = undefined;
         }
