@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start-insecure": "ng serve --disable-host-check",
     "build": "ng build --base-href /html-user-media-testing/ --prod",
     "test": "ng test",
     "lint": "ng lint",
